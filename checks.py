@@ -5,12 +5,14 @@
 # is not met.
 #
 
+import types
+
 #
 # Check that an 'instance' has method 'method_name'
 #
 def check_for_method(method_name, instance):
 
-    def hasmethod(obj, name):
+    def has_method(obj, name):
             return hasattr(obj, name) and type(getattr(obj, name)) == types.MethodType
     
     if (not has_method(instance, method_name)):
@@ -21,6 +23,6 @@ def check_for_method(method_name, instance):
 # Check that something is of type string, return if so, otherwise throw
 #
 def check_is(kind, poss):
-    if (poss is kind):
-        return poss_str
+    if (type(poss) is kind):
+        return poss
     raise TypeError("Not class {0}".format(kind.__name__))

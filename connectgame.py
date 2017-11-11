@@ -13,8 +13,10 @@ class ConnectGame:
             height = 6,
             win_length = 4,
             board = None,
-            current_player = None):
+            current_player = None,
+            num_moves = 0):
 
+        self.num_moves = num_moves
         self.width = width
         self.height = height
         self.win_length = win_length
@@ -32,22 +34,21 @@ class ConnectGame:
     def move_immutable(self, move_index):
         new_board = self.board.with_moved(move_index, self.current_player)
         new_current_player = self.players[(self.players.index(self.current_player) + 1) % len(self.players)]
+        new_num_moves = self.num_moves + 1
         return ConnectGame(
                 width = self.width,
                 height = self.height,
                 board = new_board,
-                current_player = new_current_player)
+                current_player = new_current_player,
+                num_moves = new_num_moves)
 
     def game_over(self):
-        
         indices = self.board.free_at_top_indices()
         if (len(indices) == 0):
             return True
-        
         for win in self._wins():
             if win != 0:
                 return True
-        
         return False
 
 
@@ -57,6 +58,8 @@ class ConnectGame:
                 return self.players[idx]
         return None
 
+    def hash(self):
+        return str(self.board.board) + "_" + str(self.current_player) + "_" + str(self.num_moves)
 
     def _wins(self):
         return [ self.board.lines_of_length(self.win_length, player) for player in self.players ]

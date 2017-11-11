@@ -60,7 +60,7 @@ class TestConnectGame(unittest.TestCase):
         # that it is either a win, a loss, or a draw -- so, 
         # that game_winner returns either a 1, 0, or None.
         def test_that_wins_happen(self): 
-            num_tests = 100
+            num_tests = 50
             zero_wins = 0
             one_wins = 0
             for t in range(num_tests):
@@ -77,6 +77,24 @@ class TestConnectGame(unittest.TestCase):
             self.assertTrue(zero_wins > num_tests * 0.25)
             self.assertTrue(one_wins > num_tests * 0.25)
 
+        def test_that_wins_dont_happen(self):
+
+            num_tests = 150
+            zero_wins = 0
+            one_wins = 0
+            for t in range(num_tests):
+                tmp = ConnectGame()
+                for n in range(6):
+                    moves = tmp.move_list()
+                    move = random.choice(moves)
+                    tmp = tmp.move_immutable(move)
+                winner = tmp.game_winner()
+                if winner == 1:
+                    one_wins = one_wins + 1
+                if winner == 0:
+                    zero_wins = zero_wins + 1
+            self.assertTrue(zero_wins == 0)
+            self.assertTrue(one_wins == 0)
 
 if __name__ == '__main__':
     unittest.main()
