@@ -11,12 +11,16 @@ class AbstractGame:
     def __init__(self, game_instance):
         self.instance = game_instance
 
+        check_for_method("all_players", self.instance)
         check_for_method("move_turn", self.instance)
         check_for_method("move_list", self.instance)
         check_for_method("move_immutable", self.instance)
         check_for_method("game_over", self.instance)
         check_for_method("game_winner", self.instance)
 
+    def all_players(self):
+        return check_is(list, self.instance.all_players())
+    
     def move_turn(self):
         return check_is(int, self.instance.move_turn())
 

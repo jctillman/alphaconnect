@@ -22,18 +22,17 @@ def random_simulation(ag_instance, player):
     while not inst.game_over():
         inst = inst.move_immutable(random.choice(inst.move_list()))
     winner = inst.game_winner()
-    if winner == player:
-        return 1.0
-    if winner == None:
-        return 0.0
-    return -1.0
+    return winner
 
 def uct_factory(c):
         def uct(current, child):
             child_visits = float(child['visits'])
-            
+           
+            current_player = current['game'].move_turn()
+            current_player_victories = current['victories'][current_player] 
+
             # Factor by which to exploit
-            exploit = float(child['victories']) / (1.0 + child_visits)
+            exploit = float(child['victories'][current_player]) / (1.0 + child_visits)
             
             # Factor by which to explore
             factor = float(c) * child['prob']

@@ -25,7 +25,9 @@ class TestUtils(unittest.TestCase):
             win_total = 0
             for n in range(total_plays):
                 g = AbstractGame(ConnectGame())
-                win_total = win_total + random_simulation(g,1)
+                p = random_simulation(g,1)
+                if p == 1:
+                    win_total = win_total + 1
             self.assertTrue(win_total > -5)
             self.assertTrue(win_total < 50)
 

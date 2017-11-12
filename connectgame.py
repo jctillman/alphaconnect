@@ -25,6 +25,9 @@ class ConnectGame:
         self.board = Board(width, height, self.blank_char) if board == None else board
         self.current_player = self.players[0] if current_player == None else current_player
 
+    def all_players(self):
+        return self.players
+
     def move_turn(self):
         return self.current_player
 
