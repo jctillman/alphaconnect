@@ -7,7 +7,8 @@ import math
 import random
 
 def softmax(lst):
-    powered = [ math.exp(x) for x in lst ]
+    maxed = max(lst)
+    powered = [ math.exp(x - maxed) for x in lst ]
     powered_sum = sum(powered)
     return [ x / powered_sum for x in powered ]
 

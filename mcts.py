@@ -84,7 +84,7 @@ def add_upwards(nodes, agi_hash, vict_player):
             if n is not vict_player:
                 climb_node['victories'][n] = climb_node['victories'][n] - 1
 
-def MCTS(agi, iteration_number = 130, c = 3.0 ):
+def MCTS(agi, iteration_number = 300, c = 8.0 ):
 
         # Always the same, no matter what
         nodes = {}
@@ -111,6 +111,7 @@ def MCTS(agi, iteration_number = 130, c = 3.0 ):
 
         r = nodes[root_hash]
         moves = r['game'].move_list()
+        print moves
         root_children = [ nodes[r['game'].move_immutable(m).hash() ] for m in moves ]
         print sum([ x['visits'] for x in root_children ])
         #print [ x['victories'] for x in root_children ]
