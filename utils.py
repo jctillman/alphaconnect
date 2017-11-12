@@ -20,7 +20,7 @@ def softmax(lst):
 def random_simulation(ag_instance, player):
     inst = ag_instance
     while not inst.game_over():
-        inst.move_mutable(random.choice(inst.move_list()))
+        inst = inst.move_immutable(random.choice(inst.move_list()))
     winner = inst.game_winner()
     if winner == player:
         return 1.0
@@ -37,10 +37,10 @@ def uct_factory(c):
             
             # Factor by which to explore
             factor = float(c) * child['prob']
-            numerator = math.log(float(current['visits']))
+            numerator = math.log( float(current['visits']) )
             denominator = 1.0 + child_visits
             explore = factor * math.sqrt( numerator / denominator )
-            
+           
             return exploit + explore
         return uct
 

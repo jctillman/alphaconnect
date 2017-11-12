@@ -17,17 +17,17 @@ import random
 from utils import softmax, random_simulation, uct_factory, uniform
 from math import sqrt, log
 
-def make_node(agi, parent_hash):
+def make_node(agi, parent_hash, initial_visits=0.0):
     return {
         'game': agi,
         'hash': agi.hash(),
         'prob': 1.0,
-        'visits': 0.0,
+        'visits': initial_visits,
         'victories': 0.0,
         'parent_hash': parent_hash
     }
 
-def get_next(nodes, agi):
+def get_next(nodes, agi, uct):
 
     parent_hash = None
     current_game = agi
@@ -50,13 +50,13 @@ def get_next(nodes, agi):
         nodes_present = [ ( x in nodes ) for x in pos_hash ]
         nodes_all = all(nodes_present)
 
-        print "S"
         if nodes_all:
             child_nodes = [ nodes[x] for x in pos_hash ]
             child_iter = range(len(child_nodes))
-            child_vals = [ uct(current_node, child_node[x]) for x in child_iter ]
+            child_vals = [ uct(current_node, child_nodes[x]) for x in child_iter ]
             highest = max(child_vals)
-            highest_index = child_vals.index(highes)
+            highest_index = child_vals.index(highest)
+            #print "highest index", highest_index, "highest value", highest
             parent_hash = current_hash
             current_game = child_nodes[highest_index]['game']
         else:
@@ -67,17 +67,15 @@ def get_next(nodes, agi):
 
 
 def add_upwards(nodes, agi_hash, victs):
-        print nodes.keys()
-        print "@@@@@@"
-        print agi_hash in nodes
-        print agi_hash
         climb_node = nodes[agi_hash]
         while (climb_node['parent_hash'] is not None):
             climb_node['visits'] = climb_node['visits'] + 1
             climb_node['victories'] = climb_node['victories'] + victs
             climb_node = nodes[climb_node['parent_hash']]
+        climb_node['visits'] = climb_node['visits'] + 1
+        climb_node['victories'] = climb_node['victories'] + victs
 
-def MCTS(agi, iteration_number = 30, c = 140 ):
+def MCTS(agi, iteration_number = 130, c = 3.0 ):
 
         # Always the same, no matter what
         nodes = {}
@@ -86,21 +84,29 @@ def MCTS(agi, iteration_number = 30, c = 140 ):
 
         # Intialize tree of game nodes...
         root_hash = agi.hash()
-        nodes[root_hash] = make_node(agi, None)
+        nodes[root_hash] = make_node(agi, None, initial_visits=1)
 
         for n in range(iteration_number):
-            new_agi, agi_parent_hash = get_next(nodes, agi)
-            nodes[new_agi.hash()] = make_node(new_agi, agi_parent_hash) 
-            print "ASD"
+            # Get game node, and parent of game node
+            new_agi, agi_parent_hash = get_next(nodes, agi, uct)
+            
+            # Add...
+            if not new_agi.hash() in nodes:
+                nodes[new_agi.hash()] = make_node(new_agi, agi_parent_hash) 
+            
+            # Simulate...
             victory = random_simulation(new_agi, player)
+            
+            # Backpropogate
             add_upwards(nodes, new_agi.hash(), victory)
-            print "DAASS"
-        r = root_node['game']
-        moves = r.move_list()
-        root_children = [ nodes[r.move_immutable(m).hash() ] for m in moves ]
+
+        r = nodes[root_hash]
+        moves = r['game'].move_list()
+        root_children = [ nodes[r['game'].move_immutable(m).hash() ] for m in moves ]
+        print sum([ x['visits'] for x in root_children ])
         print [ x['victories'] for x in root_children ]
         print [ x['visits'] for x in root_children ]
-        return softmax([1,2,3]) 
+        return softmax([ x['visits'] for x in root_children ]) 
 
 
 
