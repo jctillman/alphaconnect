@@ -18,7 +18,7 @@ def softmax(lst):
 # is the winner or loser.  Value draw at zero,
 # win at one, and loss at -1
 #
-def random_simulation(ag_instance, player):
+def random_simulation(ag_instance):
     inst = ag_instance
     while not inst.game_over():
         inst = inst.move_immutable(random.choice(inst.move_list()))
@@ -30,7 +30,7 @@ def uct_factory(c):
             child_visits = float(child['visits'])
            
             current_player = current['game'].move_turn()
-            current_player_victories = current['victories'][current_player] 
+            current_player_victories = current['victories'][current_player]
 
             # Factor by which to exploit
             exploit = float(child['victories'][current_player]) / (1.0 + child_visits)

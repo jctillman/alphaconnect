@@ -17,18 +17,19 @@ import random
 from utils import softmax, random_simulation, uct_factory, uniform
 from math import sqrt, log
 
-def make_node(agi, parent_hash, initial_visits=0.0):
-    node_candidate = {
+def make_node(agi, parent_hash):
+    return {
         'game': agi,
         'hash': agi.hash(),
         'prob': 1.0,
-        'visits': initial_visits,
-        'victories': { None: 0 },
+        'visits': 0.0,
+        'victories': {
+            x: 0
+            for x
+            in (agi.all_players() + [None])
+        },
         'parent_hash': parent_hash
     }
-    for n in agi.all_players():
-        node_candidate['victories'][n] = 0
-    return node_candidate 
 
 def get_next(nodes, agi, uct):
 
@@ -37,9 +38,8 @@ def get_next(nodes, agi, uct):
     
     def can_go_down():
         not_over = not current_game.game_over()
-        has_move = len(current_game.move_list()) > 0
         not_in = current_game.hash() in nodes
-        return not_over and has_move and not_in
+        return not_over and not_in
     
     while can_go_down():
 
@@ -59,7 +59,6 @@ def get_next(nodes, agi, uct):
             child_vals = [ uct(current_node, child_nodes[x]) for x in child_iter ]
             highest = max(child_vals)
             highest_index = child_vals.index(highest)
-            #print "highest index", highest_index, "highest value", highest
             parent_hash = current_hash
             current_game = child_nodes[highest_index]['game']
         else:
@@ -71,51 +70,45 @@ def get_next(nodes, agi, uct):
 
 def add_upwards(nodes, agi_hash, vict_player):
         climb_node = nodes[agi_hash]
-        while (climb_node['parent_hash'] is not None):
+        while True:
             climb_node['visits'] = climb_node['visits'] + 1
             climb_node['victories'][vict_player] = climb_node['victories'][vict_player] + 1
             for n in climb_node['game'].all_players():
                 if n is not vict_player:
                     climb_node['victories'][n] = climb_node['victories'][n] - 1
-            climb_node = nodes[climb_node['parent_hash']]
-        climb_node['visits'] = climb_node['visits'] + 1
-        climb_node['victories'][vict_player] = climb_node['victories'][vict_player] + 1
-        for n in climb_node['game'].all_players():
-            if n is not vict_player:
-                climb_node['victories'][n] = climb_node['victories'][n] - 1
+            if climb_node['parent_hash'] is None:
+                break
+            else:
+                climb_node = nodes[climb_node['parent_hash']]
+            
 
-def MCTS(agi, iteration_number = 300, c = 8.0 ):
+def MCTS(agi, iteration_number = 600, c = 5.0 ):
 
-        # Always the same, no matter what
-        nodes = {}
+        # Initialize a few things
         uct = uct_factory(c)
-        player = agi.move_turn()
-
-        # Intialize tree of game nodes...
-        root_hash = agi.hash()
-        nodes[root_hash] = make_node(agi, None, initial_visits=1)
+        nodes = {
+            agi.hash(): make_node(agi, None)
+        }
 
         for n in range(iteration_number):
             # Get game node, and parent of game node
             new_agi, agi_parent_hash = get_next(nodes, agi, uct)
             
-            # Add...
+            # Add... if it hasn't been visited
+            # This only happens in cases
+            # where victory occurs in the node, afaicr
             if not new_agi.hash() in nodes:
                 nodes[new_agi.hash()] = make_node(new_agi, agi_parent_hash) 
-            
+
             # Simulate...
-            victory = random_simulation(new_agi, player)
+            victorious_player = random_simulation(new_agi)
             
             # Backpropogate
-            add_upwards(nodes, new_agi.hash(), victory)
+            add_upwards(nodes, new_agi.hash(), victorious_player)
 
-        r = nodes[root_hash]
+        r = nodes[agi.hash()]
         moves = r['game'].move_list()
-        print moves
         root_children = [ nodes[r['game'].move_immutable(m).hash() ] for m in moves ]
-        print sum([ x['visits'] for x in root_children ])
-        #print [ x['victories'] for x in root_children ]
-        print [ x['visits'] for x in root_children ]
         return softmax([ x['visits'] for x in root_children ]) 
 
 

@@ -25,9 +25,11 @@ class TestUtils(unittest.TestCase):
             win_total = 0
             for n in range(total_plays):
                 g = AbstractGame(ConnectGame())
-                p = random_simulation(g,1)
+                p = random_simulation(g)
                 if p == 1:
                     win_total = win_total + 1
+                if p == 0:
+                    win_total = win_total - 1
             self.assertTrue(win_total > -5)
             self.assertTrue(win_total < 50)
 
@@ -35,8 +37,12 @@ class TestUtils(unittest.TestCase):
             
             vanilla = uct_factory(1)
 
-            parent = { 'visits': 1 }
-            child = { 'visits': 1, 'victories': 1, 'prob': 1 }
+            parent = {
+                'visits': 1,
+                'victories': {1: 1, 0: 1},
+                'game': AbstractGame(ConnectGame())
+            }
+            child = { 'visits': 1, 'victories': {1: 1, 0: 1}, 'prob': 1 }
 
             self.assertEqual(vanilla(parent, child),0.5)
 
