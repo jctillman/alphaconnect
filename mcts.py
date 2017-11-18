@@ -17,11 +17,11 @@ import random
 from utils import softmax, random_simulation, uct_factory, uniform
 from math import sqrt, log
 
-def make_node(agi, parent_hash):
+def make_node(agi, parent_hash, prob = 0.5):
     return {
         'game': agi,
         'hash': agi.hash(),
-        'prob': 1.0,
+        'prob': prob,
         'visits': 0.0,
         'victories': {
             x: 0
@@ -31,15 +31,15 @@ def make_node(agi, parent_hash):
         'parent_hash': parent_hash
     }
 
-def get_next(nodes, agi, uct):
+def get_next(nodes, agi, uct, evaluator):
 
     parent_hash = None
     current_game = agi
     
     def can_go_down():
         not_over = not current_game.game_over()
-        not_in = current_game.hash() in nodes
-        return not_over and not_in
+        visited = nodes[current_game.hash()]['visits'] != 0
+        return not_over and visited
     
     while can_go_down():
 
@@ -53,17 +53,20 @@ def get_next(nodes, agi, uct):
         nodes_present = [ ( x in nodes ) for x in pos_hash ]
         nodes_all = all(nodes_present)
 
-        if nodes_all:
-            child_nodes = [ nodes[x] for x in pos_hash ]
-            child_iter = range(len(child_nodes))
-            child_vals = [ uct(current_node, child_nodes[x]) for x in child_iter ]
-            highest = max(child_vals)
-            highest_index = child_vals.index(highest)
-            parent_hash = current_hash
-            current_game = child_nodes[highest_index]['game']
-        else:
-            parent_hash = current_hash
-            current_game = random.choice(pos_states)
+        if not nodes_all:
+            for pos_state in pos_states:
+                pos_hash_local = pos_state.hash()
+                pos_valuation = evaluator(pos_state);
+                if not pos_hash_local in nodes:
+                    nodes[pos_hash_local] = make_node(pos_state, current_hash, pos_valuation)
+
+        child_nodes = [ nodes[x] for x in pos_hash ]
+        child_iter = range(len(child_nodes))
+        child_vals = [ uct(current_node, child_nodes[x]) for x in child_iter ]
+        highest = max(child_vals)
+        highest_index = child_vals.index(highest)
+        parent_hash = current_hash
+        current_game = child_nodes[highest_index]['game']
 
     return current_game, parent_hash
 
@@ -82,7 +85,10 @@ def add_upwards(nodes, agi_hash, vict_player):
                 climb_node = nodes[climb_node['parent_hash']]
             
 
-def MCTS(agi, iteration_number = 600, c = 5.0 ):
+def uniform_evaluator(agi_instance):
+    return 0.5;
+
+def MCTS(agi, iteration_number = 600, c = 5.0, evaluator = uniform_evaluator):
 
         # Initialize a few things
         uct = uct_factory(c)
@@ -92,13 +98,13 @@ def MCTS(agi, iteration_number = 600, c = 5.0 ):
 
         for n in range(iteration_number):
             # Get game node, and parent of game node
-            new_agi, agi_parent_hash = get_next(nodes, agi, uct)
+            new_agi, agi_parent_hash = get_next(nodes, agi, uct, evaluator)
             
             # Add... if it hasn't been visited
             # This only happens in cases
             # where victory occurs in the node, afaicr
-            if not new_agi.hash() in nodes:
-                nodes[new_agi.hash()] = make_node(new_agi, agi_parent_hash) 
+            #if not new_agi.hash() in nodes:
+            #    nodes[new_agi.hash()] = make_node(new_agi, agi_parent_hash) 
 
             # Simulate...
             victorious_player = random_simulation(new_agi)
