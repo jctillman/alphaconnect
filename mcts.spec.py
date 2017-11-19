@@ -40,7 +40,7 @@ class TestAbstractGame(unittest.TestCase):
                     c = b.move_immutable(4)
                     d = c.move_immutable(1)
                     e = d.move_immutable(4)
-                    distribution = MCTS(e, iteration_number=500)
+                    distribution = MCTS(e, iteration_number=600)
                     highest = max(distribution)
                     highest_index = distribution.index(highest)
                     self.assertTrue(highest_index == 4)

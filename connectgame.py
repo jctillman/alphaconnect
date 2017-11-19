@@ -66,7 +66,7 @@ class ConnectGame:
         return None
 
     def hash(self):
-        return str(self.board.board) + "_" + str(self.current_player) + "_" + str(self.num_moves) + str(self.move_history)
+        return str(self.move_history)
 
     def _wins(self):
         return [ self.board.lines_of_length(self.win_length, player) for player in self.players ]
