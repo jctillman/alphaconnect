@@ -14,13 +14,15 @@ class ConnectGame:
             win_length = 4,
             board = None,
             current_player = None,
-            num_moves = 0):
+            num_moves = 0,
+            move_history = ''):
 
         self.num_moves = num_moves
         self.width = width
         self.height = height
         self.win_length = win_length
         self.players = [1,0]
+        self.move_history = move_history
         self.blank_char = '_'
         self.board = Board(width, height, self.blank_char) if board == None else board
         self.current_player = self.players[0] if current_player == None else current_player
@@ -38,12 +40,14 @@ class ConnectGame:
         new_board = self.board.with_moved(move_index, self.current_player)
         new_current_player = self.players[(self.players.index(self.current_player) + 1) % len(self.players)]
         new_num_moves = self.num_moves + 1
+        new_move_history = self.move_history + str(self.current_player) + str(move_index)
         return ConnectGame(
                 width = self.width,
                 height = self.height,
                 board = new_board,
                 current_player = new_current_player,
-                num_moves = new_num_moves)
+                num_moves = new_num_moves,
+                move_history = new_move_history)
 
     def game_over(self):
         indices = self.board.free_at_top_indices()
@@ -62,7 +66,7 @@ class ConnectGame:
         return None
 
     def hash(self):
-        return str(self.board.board) + "_" + str(self.current_player) + "_" + str(self.num_moves)
+        return str(self.board.board) + "_" + str(self.current_player) + "_" + str(self.num_moves) + str(self.move_history)
 
     def _wins(self):
         return [ self.board.lines_of_length(self.win_length, player) for player in self.players ]

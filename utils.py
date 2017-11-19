@@ -26,20 +26,16 @@ def random_simulation(ag_instance):
     return winner
 
 def uct_factory(c):
-        def uct(current, child):
-            child_visits = float(child['visits'])
-           
-            current_player = current['game'].move_turn()
-            current_player_victories = current['victories'][current_player]
-
+        def uct(current_visits, child_visits, child_victories, child_prob):
+            
             # Factor by which to exploit
-            exploit = float(child['victories'][current_player]) / (1.0 + child_visits)
+            exploit = float(child_victories / (max(1.0, child_visits)))
             
             # Factor by which to explore
-            factor = float(c) * child['prob']
-            numerator = math.log( float(current['visits']) )
-            denominator = 1.0 + child_visits
-            explore = factor * math.sqrt( numerator / denominator )
+            factor = float(c) * float(child_prob)
+            numerator = math.log( float(current_visits) )
+            denominator = float(max(1.0, child_visits))
+            explore = factor * math.sqrt(numerator / denominator)
            
             return exploit + explore
         return uct
