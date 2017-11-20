@@ -17,6 +17,7 @@ import random
 from utils import softmax, random_simulation, uct_factory, uniform
 from math import sqrt, log
 
+
 def make_node(agi, parent_hash, prob = 0.5):
     return {
         'game': agi,
@@ -53,7 +54,10 @@ def get_next(nodes, agi, uct, evaluator):
             pos_hash = pos_state.hash()
             if not pos_hash in nodes:
                 pos_valuation = evaluator(pos_state);
-                nodes[pos_hash] = make_node(pos_state, current_hash, pos_valuation)
+                nodes[pos_hash] = make_node(
+                        pos_state, 
+                        current_hash, 
+                        pos_valuation)
 
         child_nodes = [ nodes[x.hash()] for x in pos_states ]
         child_iter = range(len(child_nodes))
@@ -76,16 +80,16 @@ def get_next(nodes, agi, uct, evaluator):
 def add_upwards(nodes, agi_hash, vict_player):
         climb_node = nodes[agi_hash]
         while True:
-            climb_node['visits'] = climb_node['visits'] + 1
-            climb_node['victories'][vict_player] = climb_node['victories'][vict_player] + 1
-            if climb_node['parent_hash'] is None:
-                break
-            else:
+            climb_node['visits'] += 1
+            climb_node['victories'][vict_player] += 1
+            if climb_node['parent_hash'] is not None:
                 climb_node = nodes[climb_node['parent_hash']]
-            
+            else:
+                break
 
 def uniform_evaluator(agi_instance):
     return 1
+
 
 def MCTS(base_agi, iteration_number = 250, c = 2, evaluator = uniform_evaluator):
 
@@ -107,15 +111,5 @@ def MCTS(base_agi, iteration_number = 250, c = 2, evaluator = uniform_evaluator)
         moves = r['game'].move_list()
         root_children = [ nodes[r['game'].move_immutable(m).hash() ] for m in moves ]
         turn = r['game'].move_turn()
-#        print turn
-#        print 'visit, ', r['visits'], 'victories, ', r['victories']
-#        print 'moves, ', moves
-#        print [ uct(r['visits'], x['visits'], x['victories'][turn], x['prob']) for x in root_children ]
-#        for n in r['game'].all_players():
-#            print str(n), str([ str(x['victories'][n]) for x in root_children ])
-#        print [ x['visits'] for x in root_children ]
 
         return softmax([ x['visits'] for x in root_children ]) 
-
-
-
