@@ -34,17 +34,8 @@ class TestUtils(unittest.TestCase):
             self.assertTrue(win_total < 50)
 
         def test_uct_factory(self):
-            
             vanilla = uct_factory(1)
-
-            parent = {
-                'visits': 1,
-                'victories': {1: 1, 0: 1},
-                'game': AbstractGame(ConnectGame())
-            }
-            child = { 'visits': 1, 'victories': {1: 1, 0: 1}, 'prob': 1 }
-
-            self.assertEqual(vanilla(parent, child),0.5)
+            self.assertEqual(vanilla(1.0, 1.0, 1.0, 1.0),1.0)
 
 if __name__ == '__main__':
     unittest.main()

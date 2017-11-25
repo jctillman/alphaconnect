@@ -8,7 +8,6 @@ import random
 
 def softmax(lst, temperature=1.0):
     maxed = max(lst)
-    print lst, temperature, maxed
     powered = [
             math.exp((x - maxed) / float(temperature))
             for x in lst
