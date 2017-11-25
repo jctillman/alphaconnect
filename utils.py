@@ -6,9 +6,13 @@
 import math
 import random
 
-def softmax(lst):
+def softmax(lst, temperature=1.0):
     maxed = max(lst)
-    powered = [ math.exp(x - maxed) for x in lst ]
+    print lst, temperature, maxed
+    powered = [
+            math.exp((x - maxed) / float(temperature))
+            for x in lst
+            ]
     powered_sum = sum(powered)
     return [ x / powered_sum for x in powered ]
 
