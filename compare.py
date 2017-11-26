@@ -17,6 +17,7 @@ def compare(one, two, times, game_creator, verbose = False):
 
     one_wins = 0
     two_wins = 0
+    record = []
 
     def show(n):
         if verbose:
@@ -27,6 +28,7 @@ def compare(one, two, times, game_creator, verbose = False):
         g = game_creator()
         player_agent_map = {}
         players = g.all_players()
+        states = [g]       
         
         if n % 2 == 0:
              player_agent_map[players[0]] = one
@@ -39,11 +41,12 @@ def compare(one, two, times, game_creator, verbose = False):
             current_agent = player_agent_map[g.move_turn()]
             current_move = current_agent.move(g)
             g = g.move_immutable(current_move)
+            states.append(g)			
 
         winner = g.game_winner()
         if n % 2 == 0 and winner == players[0]:
             one_wins += 1
-            show("agent one wins")
+            show("agent one wins")        
         elif n % 2 == 1 and winner == players[1]:
             one_wins += 1
             show("agent one wins")
@@ -53,6 +56,8 @@ def compare(one, two, times, game_creator, verbose = False):
         elif n % 2 == 1 and winner == players[0]:
             two_wins += 1
             show("agent_two wins")
+        
+        record.append([ states, g.game_winner() ])
 
     return one_wins, two_wins
 

@@ -26,7 +26,7 @@ class TestCompare(unittest.TestCase):
             times_to_play = 4
             one_wins, two_wins = compare(
                     agent(40),
-                    agent(320),
+                    agent(360),
                     times_to_play,
                     game_creator, verbose=True)
             print one_wins, two_wins
@@ -35,7 +35,7 @@ class TestCompare(unittest.TestCase):
         def test_inverse_better_wins_more(self):
             times_to_play = 4
             one_wins, two_wins = compare(
-                    agent(320),
+                    agent(360),
                     agent(40),
                     times_to_play,
                     game_creator, verbose=True)
