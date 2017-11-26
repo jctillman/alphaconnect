@@ -37,6 +37,5 @@ class TestAbstractGame(unittest.TestCase):
                 self.assertTrue(num_moves < 1000)
             
 
-
 if __name__ == '__main__':
     unittest.main()
