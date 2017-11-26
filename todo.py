@@ -1,7 +1,7 @@
 
 
 #
-#
+# DONE
 # Needed -- a an agent abstraction that
 # can be constructed USING 
 # 1) MCTS only
@@ -12,7 +12,7 @@
 # that takes the a board set, and returns a move
 #
 
-
+# DONE
 # 
 # A play-to-end thing
 # Will take an agent, or two agents,

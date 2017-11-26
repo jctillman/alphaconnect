@@ -12,11 +12,13 @@ from abstractgame import AbstractGame
 from connectgame import ConnectGame
 from mcts import MCTS
 
+NUMBER_FOR_EACH = 5
+
 class TestAbstractGame(unittest.TestCase):
 
         def test_aa_wants_wim(self):
                 print "Testing can win."
-                for n in range(15):
+                for n in range(NUMBER_FOR_EACH):
                     print "Passed " + str(n)
                     inst = AbstractGame(ConnectGame())
                     a = inst.move_immutable(4)
@@ -32,7 +34,7 @@ class TestAbstractGame(unittest.TestCase):
         
         def test_bb_wants_block_death(self):
                 print "Testing can block opponent victory."
-                for n in range(15):
+                for n in range(NUMBER_FOR_EACH):
                     print "Passed " + str(n)
                     inst = AbstractGame(ConnectGame())
                     a = inst.move_immutable(4)
@@ -47,7 +49,7 @@ class TestAbstractGame(unittest.TestCase):
         
         def test_cc_several_moves_ahead(self):
                 print "Testing can look a few moves ahead..."
-                for n in range(10):
+                for n in range(NUMBER_FOR_EACH):
                     print "Passed " + str(n)
                     inst = AbstractGame(ConnectGame())
                     a = inst.move_immutable(3)
@@ -61,7 +63,7 @@ class TestAbstractGame(unittest.TestCase):
         
         def test_dd_wants_center(self):
                 print "Testing wants center..."
-                for n in range(10):
+                for n in range(NUMBER_FOR_EACH):
                     print "Passed " + str(n)
                     inst = AbstractGame(ConnectGame())
                     distribution = MCTS(inst, iteration_number=2200)
