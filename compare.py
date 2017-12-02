@@ -28,8 +28,8 @@ def compare(one, two, times, game_creator, verbose = False):
         g = game_creator()
         player_agent_map = {}
         players = g.all_players()
-        states = [g]       
-        
+        states = []
+
         if n % 2 == 0:
              player_agent_map[players[0]] = one
              player_agent_map[players[1]] = two
@@ -39,9 +39,9 @@ def compare(one, two, times, game_creator, verbose = False):
 
         while not g.game_over():
             current_agent = player_agent_map[g.move_turn()]
-            current_move = current_agent.move(g)
+            current_move, current_distribution = current_agent.move(g)
+            states.append([g, current_distribution])			
             g = g.move_immutable(current_move)
-            states.append(g)			
 
         winner = g.game_winner()
         if n % 2 == 0 and winner == players[0]:
@@ -59,5 +59,5 @@ def compare(one, two, times, game_creator, verbose = False):
         
         record.append([ states, g.game_winner() ])
 
-    return one_wins, two_wins
+    return one_wins, two_wins, record
 

@@ -26,6 +26,10 @@
 #
 
 
+# A NN that takes something from the output, and can either
+# be trained or have some kind of output.
+
+
 # Something that, in sequence, does this
 # 1. Initializes some kind of neural network, and repeatedly
 

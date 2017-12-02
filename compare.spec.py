@@ -24,7 +24,7 @@ class TestCompare(unittest.TestCase):
 
         def test_better_wins_more(self):
             times_to_play = 4
-            one_wins, two_wins = compare(
+            one_wins, two_wins, record = compare(
                     agent(40),
                     agent(360),
                     times_to_play,
@@ -34,7 +34,7 @@ class TestCompare(unittest.TestCase):
         
         def test_inverse_better_wins_more(self):
             times_to_play = 4
-            one_wins, two_wins = compare(
+            one_wins, two_wins, record = compare(
                     agent(360),
                     agent(40),
                     times_to_play,

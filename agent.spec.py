@@ -42,7 +42,7 @@ class TestAbstractGame(unittest.TestCase):
                     a = a_creator()
 
                     while not g.game_over():
-                        move = a.move(g)
+                        move, _ = a.move(g)
                         g = g.move_immutable(move)
                 
                     self.assertTrue(True)

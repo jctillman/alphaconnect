@@ -24,6 +24,6 @@ class Agent:
         moves_dist_softmax = softmax(moves_dist, temperature = self.temperature)
         move = numpy.random.choice(moves,p=moves_dist_softmax)
 
-        return move
+        return move, moves_dist_softmax
 
 

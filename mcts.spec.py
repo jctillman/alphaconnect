@@ -66,7 +66,7 @@ class TestAbstractGame(unittest.TestCase):
                 for n in range(NUMBER_FOR_EACH):
                     print "Passed " + str(n)
                     inst = AbstractGame(ConnectGame())
-                    distribution = MCTS(inst, iteration_number=2500)
+                    distribution = MCTS(inst, iteration_number=3000)
                     highest = max(distribution)
                     highest_index = distribution.index(highest)
                     self.assertTrue(highest_index == 3)
