@@ -13,14 +13,6 @@
 #
 
 # DONE
-# 
-# A play-to-end thing
-# Will take an agent, or two agents,
-# and play to the end.  It will return
-# 1. which one of them one
-# 2. a complete record of board states for them
-#
-
 #
 # Adapter to take the output of the above and put it into tensorflow stuff.
 #

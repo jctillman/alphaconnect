@@ -34,7 +34,7 @@ def connect4adapter_value(record):
         for stateAndDistribution in game:
             state = stateAndDistribution[0]
             X.append(connect4adapter_single(state, perspective))
-            Y.append(
+            Y.append([
                 1 if outcome == perspective else -1
-            )
+            ])
     return X, Y
